@@ -5,6 +5,8 @@ include_once 'console.php'; //allow syntax color only run on powershell
 
 error_reporting(0); // avoid warning + useless error
 
+//TO DO : 10 algo differents to find
+
 
 print Console::cyan(" ______________________________________________________________________________ ") . PHP_EOL . PHP_EOL;
 print   Console::cyan(" |||||");
@@ -26,6 +28,7 @@ $list_algo_bits =
         320 => 80, /* RipMD320 */
         256 => 64, /* Snefru256 */
         224 => 56, /* SHA224 */
+        192 => 48, /* Tiger192 - 4 Rounds */
         /* 13 .. */
 
         //Implementer into LIST !!! for each new algo
@@ -80,10 +83,122 @@ if ($argv[1] == '--help') {
 
 //option ou en simple commande ???
 if ($argv[1] == '--john') {
+
     echo "  _____________________________ JOHN THE RIPPER _____________________________";
     echo PHP_EOL;
     echo PHP_EOL;
     echo PHP_EOL;
+    echo PHP_EOL;
+
+
+    echo " // Infos \\\\" . PHP_EOL;
+    echo PHP_EOL;
+    echo Console::green("John est capable de casser differents formats de chiffrement de mots de passe, notamment les mots de passe crypt (Unix), MD5, Blowfish, Kerberos, AFS, et les LM hashes de Windows NT/2000/XP/2003. Des modules additionnels sont disponibles pour lui permettre de casser les mots de passe basés sur les hash MD4 et les mots de passe enregistrés dans MySQL ou LDAP, ainsi que les mots de passe NTLM, pour les dernières versions de Windows.
+Il n'est pas necessaire d'avoir un acces physique sur la machine a auditer, tant qu'on dispose d'un fichier dans lequel sont enregistres les mots de passe chiffres.
+");
+
+    echo PHP_EOL;
+    echo PHP_EOL;
+
+
+    //Choose your file.txt
+    //...
+    echo "Enter the name of your file (dont forget .txt) [Type the name to continue]: ";
+    $handle = fopen("php://stdin", "r");
+    $filename = fgets($handle);
+    echo "file choose : " . $filename;
+    fclose($handle);
+    echo "\n";
+
+    echo "Type 0 1 2 for your mod => [single, wordlist, incremental]: ";
+    $mod = [0 => "single", 1 => "wordlist", 2 => "incremental"];
+
+    $handle = fopen("php://stdin", "r");
+    $numberChoix = fgets($handle);
+    //echo "Mod : " . $mod[$numberChoix];
+    fclose($handle);
+    echo "\n";
+
+    //cas dico, ask for the dico file too
+    if ($numberChoix == 1) {
+        echo "Enter the name of your wordlist file (dont forget .lst) [Type the name to continue]: ";
+        $handle = fopen("php://stdin", "r");
+        $dico = fgets($handle);
+        echo "file choose : " . $dico;
+        fclose($handle);
+        echo "\n";
+    } else {
+        $dico = "";
+    }
+
+    if ($numberChoix == 2) {
+        echo "Type 0 1 2 for your mod => [alpha, digit, all]:";
+        $handle = fopen("php://stdin", "r");
+        $optionIncrement = fgets($handle);
+        echo "Option : " . $optionIncrement;
+        fclose($handle);
+        echo "\n";
+    } else {
+        $optionIncrement = "";
+    }
+
+
+    echo "Enter the password to crack : ";
+    $handle = fopen("php://stdin", "r");
+    $passwordToCrack = fgets($handle);
+    echo "password  : " . $passwordToCrack;
+    fclose($handle);
+    echo "\n";
+
+    echo PHP_EOL;
+    echo "          ...            ";
+    echo PHP_EOL;
+
+    //WRITE GENERATE CHAIN
+    switch ($numberChoix) {
+        case 0:
+            echo PHP_EOL;
+            echo "john --single " . $filename;
+            echo PHP_EOL;
+            echo "john --si " . $filename;
+            echo PHP_EOL;
+            break;
+        case 1:
+            echo PHP_EOL;
+            echo "john ––wordlist=" . $dico . " " . $filename;
+            echo PHP_EOL;
+            echo "john ––w=" . $dico . " " . $filename;
+            echo PHP_EOL;
+            break;
+        case 2:
+            switch ($optionIncrement) {
+                case 0:
+                    echo PHP_EOL;
+                    echo "john ––i:alpha " . $filename;
+                    echo PHP_EOL;
+                    break;
+                case 1:
+                    echo PHP_EOL;
+                    echo "john ––i:digit " . $filename;
+                    echo PHP_EOL;
+                    break;
+                case 2:
+                    echo PHP_EOL;
+                    echo "john ––i:all " . $filename;
+                    echo PHP_EOL;
+                    break;
+                default:
+                    echo PHP_EOL;
+                    echo "john ––incremental " . $filename;
+                    echo PHP_EOL;
+                    break;
+            }
+            break;
+        default:
+            print " Something wrong happend, please retry :( ";
+            break;
+    }
+
 }
 
 //Display list of algo
@@ -196,6 +311,63 @@ function wikipedia($nameHash)
             echo " Extract from wikipedia : " . $titles[0];
             echo PHP_EOL;
             break;
+        case "ripmd":
+            echo PHP_EOL;
+            $url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=ripmd&format=json&explaintext&redirects&inprop=url";
+            $json = file_get_contents($url);
+            $data = json_decode($json, TRUE);
+            $titles = array();
+            foreach ($data['query']['pages'] as $page) {
+                $titles[] = $page['extract'];
+            }
+            echo PHP_EOL;
+            echo " Extract from wikipedia : " . $titles[0];
+            echo PHP_EOL;
+            break;
+        case "snefru":
+            echo PHP_EOL;
+            $url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=snefru&format=json&explaintext&redirects&inprop=url";
+            $json = file_get_contents($url);
+            $data = json_decode($json, TRUE);
+            $titles = array();
+            foreach ($data['query']['pages'] as $page) {
+                $titles[] = $page['extract'];
+            }
+            echo PHP_EOL;
+            echo " Extract from wikipedia : " . $titles[0];
+            echo PHP_EOL;
+            break;
+        case "sha224":
+            echo PHP_EOL;
+            $url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=sha1&format=json&explaintext&redirects&inprop=url";
+            $json = file_get_contents($url);
+            $data = json_decode($json, TRUE);
+            $titles = array();
+            foreach ($data['query']['pages'] as $page) {
+                $titles[] = $page['extract'];
+            }
+            echo PHP_EOL;
+            echo " Extract from wikipedia : " . $titles[0];
+            echo PHP_EOL;
+            break;
+        case "tiger":
+            echo PHP_EOL;
+            $url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=Tiger_(cryptography)&format=json&explaintext&redirects&inprop=url";
+            $json = file_get_contents($url);
+            $data = json_decode($json, TRUE);
+            $titles = array();
+            foreach ($data['query']['pages'] as $page) {
+                $titles[] = $page['extract'];
+            }
+            echo PHP_EOL;
+            echo " Extract from wikipedia : " . $titles[0];
+            echo PHP_EOL;
+            break;
+        default:
+            echo PHP_EOL;
+            echo " No data found from wikipedia";
+            echo PHP_EOL;
+            break;
 
 
     }
@@ -204,6 +376,7 @@ function wikipedia($nameHash)
 
 //if param dosnt begin by --
 if ($argv[1][0] != "-" || $argv[1][1] != "-") {
+
 
     if ($argv[1][0] == "$" && $argv[1][3] == "$" && $argv[1][6] == "$") {
 
@@ -254,15 +427,36 @@ if ($argv[1][0] != "-" || $argv[1][1] != "-") {
                 print PHP_EOL;
                 print Console::yellow(" RipMD") . Console::light_green('' . $hash_bits);
                 print PHP_EOL;
+                print PHP_EOL;
+                wikipedia("ripmd");
+                print PHP_EOL;
+                print PHP_EOL;
                 break;
             case 64:
                 print PHP_EOL;
                 print Console::yellow(" Snefru") . Console::light_green('' . $hash_bits);
                 print PHP_EOL;
+                print PHP_EOL;
+                wikipedia("snefru");
+                print PHP_EOL;
+                print PHP_EOL;
                 break;
             case 56:
                 print PHP_EOL;
                 print Console::yellow(" SHA") . Console::light_green('' . $hash_bits);
+                print PHP_EOL;
+                print PHP_EOL;
+                wikipedia("sha224");
+                print PHP_EOL;
+                print PHP_EOL;
+                break;
+            case 48:
+                print PHP_EOL;
+                print Console::yellow(" Tiger") . Console::light_green('' . $hash_bits);
+                print PHP_EOL;
+                print PHP_EOL;
+                wikipedia("tiger");
+                print PHP_EOL;
                 print PHP_EOL;
                 break;
 
