@@ -470,3 +470,10 @@ if ($argv[1][0] != "-" || $argv[1][1] != "-") {
 }
 
 
+/*
+ * USEFULL LINKS
+ * https://www.tools4noobs.com/online_php_functions/str_rot13/
+ * http://www.unit-conversion.info/texttools/rot13/#data
+ * FOR API WIKIPEDIA : https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=Tiger_(cryptography)&format=json&explaintext&redirects&inprop=url
+ * Replace into props by what we want !
+ */
