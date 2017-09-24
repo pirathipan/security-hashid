@@ -29,10 +29,10 @@ $list_algo_bits =
         256 => 64, /* Snefru256 */
         224 => 56, /* SHA224 */
         192 => 48, /* Tiger192 - 4 Rounds */
-        /* 13 .. */
-
-        //Implementer into LIST !!! for each new algo
-
+        52 => 13, /* DES */
+        48 => 12, /* XOR encrypt (with key Text / Hexa / Binary */
+        512 => 128, /* SHA512 */
+        384 => 96, /* SHA384 */
     ];
 
 
@@ -363,6 +363,58 @@ function wikipedia($nameHash)
             echo " Extract from wikipedia : " . $titles[0];
             echo PHP_EOL;
             break;
+        case "DES":
+            echo PHP_EOL;
+            $url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=Data_Encryption_Standard&format=json&explaintext&redirects&inprop=url";
+            $json = file_get_contents($url);
+            $data = json_decode($json, TRUE);
+            $titles = array();
+            foreach ($data['query']['pages'] as $page) {
+                $titles[] = $page['extract'];
+            }
+            echo PHP_EOL;
+            echo " Extract from wikipedia : " . $titles[0];
+            echo PHP_EOL;
+            break;
+        case "XOR":
+            echo PHP_EOL;
+            $url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=XOR_cipher&format=json&explaintext&redirects&inprop=url";
+            $json = file_get_contents($url);
+            $data = json_decode($json, TRUE);
+            $titles = array();
+            foreach ($data['query']['pages'] as $page) {
+                $titles[] = $page['extract'];
+            }
+            echo PHP_EOL;
+            echo " Extract from wikipedia : " . $titles[0];
+            echo PHP_EOL;
+            break;
+        case "SHA512":
+            echo PHP_EOL;
+            $url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=Secure_Hash_Algorithm&format=json&explaintext&redirects&inprop=url";
+            $json = file_get_contents($url);
+            $data = json_decode($json, TRUE);
+            $titles = array();
+            foreach ($data['query']['pages'] as $page) {
+                $titles[] = $page['extract'];
+            }
+            echo PHP_EOL;
+            echo " Extract from wikipedia : " . $titles[0];
+            echo PHP_EOL;
+            break;
+        case "SHA384":
+            echo PHP_EOL;
+            $url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=SHA-3&format=json&explaintext&redirects&inprop=url";
+            $json = file_get_contents($url);
+            $data = json_decode($json, TRUE);
+            $titles = array();
+            foreach ($data['query']['pages'] as $page) {
+                $titles[] = $page['extract'];
+            }
+            echo PHP_EOL;
+            echo " Extract from wikipedia : " . $titles[0];
+            echo PHP_EOL;
+            break;
         default:
             echo PHP_EOL;
             echo " No data found from wikipedia";
@@ -459,7 +511,42 @@ if ($argv[1][0] != "-" || $argv[1][1] != "-") {
                 print PHP_EOL;
                 print PHP_EOL;
                 break;
-
+            case 13:
+                print PHP_EOL;
+                print Console::yellow(" DES");
+                print PHP_EOL;
+                print PHP_EOL;
+                wikipedia("DES");
+                print PHP_EOL;
+                print PHP_EOL;
+                break;
+            case 12:
+                print PHP_EOL;
+                print Console::yellow(" XOR encrypt with key (hexadecimal / text / binary)");
+                print PHP_EOL;
+                print PHP_EOL;
+                wikipedia("XOR");
+                print PHP_EOL;
+                print PHP_EOL;
+                break;
+            case 128:
+                print PHP_EOL;
+                print Console::yellow(" SHA") . Console::light_green('' . $hash_bits);
+                print PHP_EOL;
+                print PHP_EOL;
+                wikipedia("SHA512");
+                print PHP_EOL;
+                print PHP_EOL;
+                break;
+            case 96:
+                print PHP_EOL;
+                print Console::yellow(" SHA") . Console::light_green('' . $hash_bits);
+                print PHP_EOL;
+                print PHP_EOL;
+                wikipedia("SHA384");
+                print PHP_EOL;
+                print PHP_EOL;
+                break;
             default:
                 print Console::light_red(" /!\\ Im sorry, 0 algorithms matched with that hash :( ");
                 print PHP_EOL;
@@ -476,4 +563,6 @@ if ($argv[1][0] != "-" || $argv[1][1] != "-") {
  * http://www.unit-conversion.info/texttools/rot13/#data
  * FOR API WIKIPEDIA : https://en.wikipedia.org/w/api.php?action=query&prop=extracts|info&exintro&titles=Tiger_(cryptography)&format=json&explaintext&redirects&inprop=url
  * Replace into props by what we want !
+ * https://www.tools4noobs.com/online_tools/encrypt/
+ * https://crypter.online/
  */
